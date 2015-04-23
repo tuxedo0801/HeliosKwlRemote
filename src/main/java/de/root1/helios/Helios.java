@@ -265,7 +265,7 @@ public class Helios {
                         && telegram[5] == calculateCRC(telegram)) {
                     long end = System.currentTimeMillis();
                     log.trace("****** Time taken to read: {} ms", (end - start));
-                    log.debug("Telegram received [{}]", telegramToString(telegram));
+                    log.trace("Telegram received [{}]", telegramToString(telegram));
                     log.debug("Reading telegram...*done*");
                     return telegram[4];
                 }
@@ -438,7 +438,7 @@ public class Helios {
             
             final int lastSpeed = readValue("fanspeed");
             
-            Thread resoreThread = new Thread("RestoreFanspeed"){
+            Thread restoreThread = new Thread("RestoreFanspeed"){
 
                 @Override
                 public void run() {
@@ -473,7 +473,7 @@ public class Helios {
                     } 
                 }
             };
-            resoreThread.start();
+            restoreThread.start();
         }
 
         // will contain our value converted to raw
@@ -561,7 +561,7 @@ public class Helios {
                     // Send poll request
                     byte[] telegram = createTelegram(CONST_BUS_ME, CONST_BUS_MAINBOARD1, (byte) 0, var.varid);
                     sendTelegram(telegram);
-
+                    
                     // Read response, reading can cause expception!
                     byte rawvalue = readTelegram(CONST_BUS_MAINBOARD1, CONST_BUS_ME, var.varid);
                     int value = convertFromRawValue(varname, rawvalue);
@@ -628,11 +628,15 @@ public class Helios {
     }
     
     public static void main(String[] args) throws IOException, TelegramException {
+        long start = System.currentTimeMillis();
         Helios h = new Helios("192.168.200.4", 4000);
         h.connect();
-        int i = h.readValue("bypass_disabled");
-        System.out.println("bypass_disabled = "+i);
+//        int i = h.readValue("bypass_disabled");
+//        System.out.println("bypass_disabled = "+i);
+        h.dump();
         h.disconnect();
+        long end = System.currentTimeMillis();
+        System.out.println("time: "+(end-start));
         
     }
 
