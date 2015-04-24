@@ -60,7 +60,8 @@ public class Helios {
         new Variable("max_fanspeed", (byte) 0xA5, Variable.Type.fanspeed, -1, true, true),
         new Variable("min_fanspeed", (byte) 0xA9, Variable.Type.fanspeed, -1, true, true),
         new Variable("power_state", (byte) 0xA3, Variable.Type.bit, 0, true, true),
-        new Variable("bypass_disabled", (byte) 0xA3, Variable.Type.bit, 3, true, true),
+//        new Variable("bypass_disabled", (byte) 0xA3, Variable.Type.bit, 3, true, true),
+        new Variable("bypass", (byte) 0x08, Variable.Type.bit, 1, true, true),
         new Variable("clean_filter", (byte) 0xAB, Variable.Type.dec, -1, true, true),
         new Variable("boost_setting", (byte) 0xAA, Variable.Type.bit, 5, true, true),
         new Variable("boost_on", (byte) 0x71, Variable.Type.bit, 5, true, true),
@@ -93,10 +94,10 @@ public class Helios {
     private boolean isConnected;
 
     // delay between two waitForSilence+send commands
-    private final long SEND_DELAY = 50;
+    private final long SEND_DELAY = 1;
 
     // delay before retry reading
-    private final long RETRY_DELAY = 50;
+    private final long RETRY_DELAY = 10;
     
     // init lastSend so, that 1st send can run immediately
     private long lastSend = System.currentTimeMillis() - SEND_DELAY;
@@ -233,7 +234,7 @@ public class Helios {
          useful out of it!
          How long does it take until something useful is received???
          */
-        long timeout = System.currentTimeMillis() + 1000;
+        long timeout = System.currentTimeMillis() + 100;
 
         byte[] telegram = new byte[]{0, 0, 0, 0, 0, 0};
 
@@ -552,11 +553,11 @@ public class Helios {
         log.debug("Helios: Reading value: {}", varname);
 //
         int count = 0;
-        int maxCount = 3;
+        int maxCount = 10;
+        boolean problemReading = false;
         while (count < maxCount) {
             log.debug("Try to read, attempt #{}", count);
             try {
-//
                 if (waitForSilence()) {
                     // Send poll request
                     byte[] telegram = createTelegram(CONST_BUS_ME, CONST_BUS_MAINBOARD1, (byte) 0, var.varid);
@@ -564,8 +565,12 @@ public class Helios {
                     
                     // Read response, reading can cause expception!
                     byte rawvalue = readTelegram(CONST_BUS_MAINBOARD1, CONST_BUS_ME, var.varid);
+                    if (problemReading) {
+                        log.info("Now reading variable '{}' was successful", varname);
+                    }
                     int value = convertFromRawValue(varname, rawvalue);
 
+                    
                     log.debug(String.format("Value for %s (%02x) received: %02x|%s|%d --> converted = %d",
                             varname,
                             var.varid,
@@ -579,10 +584,10 @@ public class Helios {
                 } else {
                     throw new TelegramException("Reading value from ventilation system failed. No free slot to send poll request available.");
                 }
-//                
             } catch (Exception ex) {
-                reconnect();
-                log.debug("Did not get answer in time for '"+varname+"' in attempt #"+count+"... Wait and go for next attempt. ExceptionMessage={}", ex.getMessage());
+                
+                log.warn("Did not get answer in time for '"+varname+"' in attempt #"+count+"... Wait and go for next attempt. ExceptionMessage={}", ex.getMessage());
+                problemReading = true;
                 count++;
                 try {
                     Thread.sleep(RETRY_DELAY);
@@ -590,6 +595,7 @@ public class Helios {
                 }
             }
         } // end of while
+        reconnect();
         throw new TelegramException("Error while reading '"+varname+"'. Max attempts "+maxCount+" reached.");
     }
 
