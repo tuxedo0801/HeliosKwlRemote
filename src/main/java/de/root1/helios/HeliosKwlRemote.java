@@ -31,6 +31,7 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,25 +50,25 @@ public class HeliosKwlRemote {
         }
     }
     private long STANDBY_DELAY = 60000; // 1min
-    private long lastIdleSwitch = System.currentTimeMillis()-STANDBY_DELAY;
+    private long lastStandbySwitch = System.currentTimeMillis() - STANDBY_DELAY;
     private boolean timerScheduled;
-    private IdleSwitcher is;
+    private StandbySwitcher is;
 
-    class IdleSwitcher extends TimerTask {
+    class StandbySwitcher extends TimerTask {
 
         private final boolean newIdleState;
 
-        IdleSwitcher(boolean newIdleState) {
+        StandbySwitcher(boolean newIdleState) {
             this.newIdleState = newIdleState;
         }
-        
-        public boolean getNewIdleState() {
+
+        public boolean getNewStandbyState() {
             return newIdleState;
         }
 
         @Override
         public void run() {
-            if (newIdleState==idleState) {
+            if (newIdleState == idleState) {
                 log.info("Nothing to do for idle switcher");
                 timerScheduled = false;
                 return;
@@ -115,7 +116,7 @@ public class HeliosKwlRemote {
                 log.error("Error triggering idle state", ex);
             }
             timerScheduled = false;
-            lastIdleSwitch = System.currentTimeMillis();
+            lastStandbySwitch = System.currentTimeMillis();
         }
 
     }
@@ -316,7 +317,7 @@ public class HeliosKwlRemote {
                                 switch (varname) {
                                     case "standby": {
                                         try {
-                                            triggerIdleState(event.asBool());
+                                            triggerStandbyState(event.asBool());
                                         } catch (Exception ex) {
                                             ex.printStackTrace();
                                         }
@@ -333,30 +334,39 @@ public class HeliosKwlRemote {
         }
     }
 
-    private void triggerIdleState(boolean idle) {
-        
-//        if (idle==idleState) {
-//            log.debug("Nothing to do for idle switch. Still the same...");
-//            return;
-//        }
-        if (is!=null) {
-            
-            if (idle==is.getNewIdleState()) {
-                log.info("new idle state '{}' is alreay scheduled. Nothing to do for now.", idle);
+    private void triggerStandbyState(boolean standby) {
+
+        if (is != null) {
+            if (standby == is.getNewStandbyState()) {
+                log.info("new standby state '{}' is alreay scheduled. Nothing to do for now.", standby);
                 return;
             } else {
-                log.info("replaceding scheduled idle state '{}' with '{}'", is.getNewIdleState(), idle);
+                log.info("replaceding scheduled standby state '{}' with '{}'", is.getNewStandbyState(), standby);
                 is.cancel();
             }
         }
-        is = new IdleSwitcher(idle);
+        is = new StandbySwitcher(standby);
 
-        if (System.currentTimeMillis() - lastIdleSwitch < STANDBY_DELAY || timerScheduled) {
+        if (System.currentTimeMillis() - lastStandbySwitch < STANDBY_DELAY || timerScheduled) {
             // run with delay
-            log.info("Delaying idle state switch to '{}' by {}ms", idle, STANDBY_DELAY);
+            log.info("Delaying standby state switch to '{}' by {}ms", standby, STANDBY_DELAY);
+
+            int boostRemaining = 0;
+            try {
+                boostRemaining = h.readValue("boost_remaining");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            } catch (TelegramException ex) {
+                ex.printStackTrace();
+            }
             
+            if (boostRemaining>0) {
+                log.info("Additional delay standby state switch by {}min due to running boost", boostRemaining);
+            }
+
             timerScheduled = true;
-            t.schedule(is, STANDBY_DELAY);
+            t.schedule(is, STANDBY_DELAY + (boostRemaining * 60/*sec*/ * 1000/* millisec */));
+
         } else {
             // run now
             is.run();
