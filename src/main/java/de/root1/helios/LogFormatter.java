@@ -79,7 +79,7 @@ public class LogFormatter extends Formatter {
      * Returns the stacktrace of the given throwable as a string. String will be
      * the same as "e.printStackTrace();" woulld print to console
      *
-     * @param e
+     * @param e throwable to get stacktrace from
      * @return the exceptions stacktrace as a string
      */
     public static String getStackTraceAsString(Throwable e) {

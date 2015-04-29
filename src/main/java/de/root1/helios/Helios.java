@@ -61,7 +61,7 @@ public class Helios {
         new Variable("min_fanspeed", (byte) 0xA9, Variable.Type.fanspeed, -1, true, true),
         new Variable("power_state", (byte) 0xA3, Variable.Type.bit, 0, true, true),
 //        new Variable("bypass_disabled", (byte) 0xA3, Variable.Type.bit, 3, true, true),
-        new Variable("bypass", (byte) 0x08, Variable.Type.bit, 1, true, true),
+        new Variable("bypass", (byte) 0x08, Variable.Type.bit, 1, true, false),
         new Variable("clean_filter", (byte) 0xAB, Variable.Type.dec, -1, true, true),
         new Variable("boost_setting", (byte) 0xAA, Variable.Type.bit, 5, true, true),
         new Variable("boost_on", (byte) 0x71, Variable.Type.bit, 5, true, true),
@@ -566,7 +566,7 @@ public class Helios {
                     // Read response, reading can cause expception!
                     byte rawvalue = readTelegram(CONST_BUS_MAINBOARD1, CONST_BUS_ME, var.varid);
                     if (problemReading) {
-                        log.info("Now reading variable '{}' was successful", varname);
+                        log.debug("Now reading variable '{}' was successful", varname);
                     }
                     int value = convertFromRawValue(varname, rawvalue);
 
@@ -586,7 +586,7 @@ public class Helios {
                 }
             } catch (Exception ex) {
                 
-                log.warn("Did not get answer in time for '"+varname+"' in attempt #"+count+"... Wait and go for next attempt. ExceptionMessage={}", ex.getMessage());
+                log.debug("Did not get answer in time for '"+varname+"' in attempt #"+count+"... Wait and go for next attempt. ExceptionMessage={}", ex.getMessage());
                 problemReading = true;
                 count++;
                 try {
