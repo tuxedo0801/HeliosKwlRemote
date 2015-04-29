@@ -69,15 +69,15 @@ public class HeliosKwlRemote {
         @Override
         public void run() {
             if (newIdleState == idleState) {
-                log.info("Nothing to do for idle switcher");
+                log.debug("Nothing to do for standby switcher");
                 timerScheduled = false;
                 return;
             }
             try {
                 if (idleSpeed == -1) {
-                    log.warn("received idle-trigger '{}', but idle is disabled! Will skip this.", newIdleState);
+                    log.warn("received standby-trigger '{}', but standby is disabled! Will skip this.", newIdleState);
                 } else {
-                    log.info("Triggering idle state({}) to {}", idleState, newIdleState);
+                    log.info("Switching standby state({}) to {}", idleState, newIdleState);
                     if (newIdleState && !idleState) {
                         lastFanspeed = h.readValue("fanspeed");
                         switch (idleSpeed) {
@@ -93,7 +93,7 @@ public class HeliosKwlRemote {
                             case 6:
                             case 7:
                             case 8:
-                                log.info("Switching fanspeed to idle speed {}", idleSpeed);
+                                log.info("Switching fanspeed to standby speed {}", idleSpeed);
                                 h.writeValue("fanspeed", idleSpeed);
                                 break;
                         }
