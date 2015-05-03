@@ -31,7 +31,6 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Handler;
-import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +48,8 @@ public class HeliosKwlRemote {
 //            handler.setLevel(Level.parse(System.getProperty("loglevel", "info")));
         }
     }
-    private long STANDBY_DELAY = 60000; // 1min
-    private long lastStandbySwitch = System.currentTimeMillis() - STANDBY_DELAY;
+    private long standbyDelay = 300000; // 5min
+    private long lastStandbySwitch = System.currentTimeMillis() - standbyDelay;
     private boolean timerScheduled;
     private StandbySwitcher is;
 
@@ -74,6 +73,12 @@ public class HeliosKwlRemote {
                 return;
             }
             try {
+                int boostRemain = h.readValue("boost_remaining");
+                if (boostRemain>0) {
+                    log.info("Skipping standby-switch due to running boost. Will delay it.");
+                    triggerStandbyState(newIdleState);
+                    return;
+                }
                 if (idleSpeed == -1) {
                     log.warn("received standby-trigger '{}', but standby is disabled! Will skip this.", newIdleState);
                 } else {
@@ -129,25 +134,46 @@ public class HeliosKwlRemote {
     private final Helios h;
     private final Knx knx;
     private String individualAddress;
-    Map<String, HeliosVariableCache> cachedVariables;
+    private Map<String, HeliosVariableCache> cachedVariables;
     private int idleSpeed = -1;
     private boolean idleState = false;
     private int lastFanspeed;
 
+    private int getIntFromProperties(String name, int defaultValue) {
+        String stringValue = p.getProperty(name, Integer.toString(defaultValue));
+        try {
+            int value = Integer.parseInt(stringValue);
+            return value;
+        } catch (NumberFormatException ex) {
+            log.warn("Error reading config: {} does not contain a readable integer value: '{}'. Will continue with default: {}", name, stringValue, defaultValue);
+            return defaultValue;
+        }
+    }
+
+    private boolean getBooleanFromProperties(String name, boolean defaultValue) {
+        String stringValue = p.getProperty(name, Boolean.toString(defaultValue));
+        boolean value = Boolean.parseBoolean(stringValue);
+        return value;
+    }
+
     public HeliosKwlRemote() throws IOException {
         readConfig();
+        
+        int port = getIntFromProperties("port", 4000);
+        String host = p.getProperty("host");
+        boolean restoreFanspeedAfterBoost = getBooleanFromProperties("restore_fanspeed_after_boost", false);
+        int keeptime = getIntFromProperties("cache_keep", 1000);
+        boolean sendOnUpdate = getBooleanFromProperties("send_on_update", false);
+        idleSpeed = getIntFromProperties("standby_speed", -1);
+        standbyDelay = getIntFromProperties("standby_delay", 300000);
+        
         log.info("Connecting to Helios KWL on {}:{}", p.getProperty("host"), p.getProperty("port"));
-        h = new Helios(p.getProperty("host"), Integer.parseInt(p.getProperty("port")));
-        h.setRestoreFanspeedAfterBoost(Boolean.parseBoolean(p.getProperty("restore_fanspeed_after_boost", "false")));
+        h = new Helios(host, port);
+        h.setRestoreFanspeedAfterBoost(restoreFanspeedAfterBoost);
         h.connect();
         knx = new Knx();
-        int keeptime = Integer.parseInt(p.getProperty("cache_keep", "60000"));
         log.info("Initialize cache variables with {}ms cache-keep-time", keeptime);
         cachedVariables = h.getCachedVariables(keeptime);
-
-        boolean sendOnUpdate = Boolean.parseBoolean(p.getProperty("send_on_update", "false"));
-        idleSpeed = Integer.parseInt(p.getProperty("standby_speed", "-1"));
-        STANDBY_DELAY = Integer.parseInt(p.getProperty("standby_delay", "60000"));
 
         Thread updater = new Thread() {
 
@@ -347,11 +373,11 @@ public class HeliosKwlRemote {
         }
         is = new StandbySwitcher(standby);
 
-        if (System.currentTimeMillis() - lastStandbySwitch < STANDBY_DELAY || timerScheduled) {
+        if (System.currentTimeMillis() - lastStandbySwitch < standbyDelay || timerScheduled) {
             // run with delay
-            log.info("Delaying standby state switch to '{}' by {}ms", standby, STANDBY_DELAY);
+            log.info("Delaying standby state switch to '{}' by {}ms", standby, standbyDelay);
 
-            int boostRemaining = 0;
+            int boostRemaining = -1;
             try {
                 boostRemaining = h.readValue("boost_remaining");
             } catch (IOException ex) {
@@ -362,10 +388,12 @@ public class HeliosKwlRemote {
             
             if (boostRemaining>0) {
                 log.info("Additional delay standby state switch by {}min due to running boost", boostRemaining);
+            } else if (boostRemaining==-1){
+                log.warn("Not able to read boost_remaining!");
             }
 
             timerScheduled = true;
-            t.schedule(is, STANDBY_DELAY + (boostRemaining * 60/*sec*/ * 1000/* millisec */));
+            t.schedule(is, standbyDelay + (boostRemaining * 60/*sec*/ * 1000/* millisec */));
 
         } else {
             // run now
