@@ -140,7 +140,7 @@ public class HeliosKwlRemote {
     private int lastFanspeed;
 
     private int getIntFromProperties(String name, int defaultValue) {
-        String stringValue = p.getProperty(name, Integer.toString(defaultValue));
+        String stringValue = p.getProperty(name, Integer.toString(defaultValue)).trim();
         try {
             int value = Integer.parseInt(stringValue);
             return value;
@@ -151,7 +151,7 @@ public class HeliosKwlRemote {
     }
 
     private boolean getBooleanFromProperties(String name, boolean defaultValue) {
-        String stringValue = p.getProperty(name, Boolean.toString(defaultValue));
+        String stringValue = p.getProperty(name, Boolean.toString(defaultValue)).trim();
         boolean value = Boolean.parseBoolean(stringValue);
         return value;
     }
