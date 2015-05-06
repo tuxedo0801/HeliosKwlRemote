@@ -367,7 +367,7 @@ public class HeliosKwlRemote {
                 log.info("new standby state '{}' is alreay scheduled. Nothing to do for now.", standby);
                 return;
             } else {
-                log.info("replaceding scheduled standby state '{}' with '{}'", is.getNewStandbyState(), standby);
+                log.info("replacing scheduled standby state '{}' with '{}'", is.getNewStandbyState(), standby);
                 is.cancel();
             }
         }
