@@ -41,11 +41,13 @@ import org.slf4j.LoggerFactory;
 public class HeliosKwlRemote {
 
     static {
-        LogFormatter formatter = new LogFormatter();
-        Handler[] handlers = java.util.logging.Logger.getLogger("").getHandlers();
-        for (Handler handler : handlers) {
-            handler.setFormatter(formatter);
-//            handler.setLevel(Level.parse(System.getProperty("loglevel", "info")));
+        if (System.getProperty("java.util.logging.config.file") == null) {
+            System.out.println("Please specify logfile by passing '-Djava.util.logging.config.file=<logconfig-file>' to JVM");
+            LogFormatter formatter = new LogFormatter();
+            Handler[] handlers = java.util.logging.Logger.getLogger("").getHandlers();
+            for (Handler handler : handlers) {
+                handler.setFormatter(formatter);
+            }
         }
     }
     private long standbyDelay = 300000; // 5min
@@ -74,7 +76,7 @@ public class HeliosKwlRemote {
             }
             try {
                 int boostRemain = h.readValue("boost_remaining");
-                if (boostRemain>0) {
+                if (boostRemain > 0) {
                     log.info("Skipping standby-switch due to running boost. Will delay it.");
                     triggerStandbyState(newIdleState);
                     return;
@@ -158,7 +160,7 @@ public class HeliosKwlRemote {
 
     public HeliosKwlRemote() throws IOException {
         readConfig();
-        
+
         int port = getIntFromProperties("port", 4000);
         String host = p.getProperty("host");
         boolean restoreFanspeedAfterBoost = getBooleanFromProperties("restore_fanspeed_after_boost", false);
@@ -166,7 +168,7 @@ public class HeliosKwlRemote {
         boolean sendOnUpdate = getBooleanFromProperties("send_on_update", false);
         idleSpeed = getIntFromProperties("standby_speed", -1);
         standbyDelay = getIntFromProperties("standby_delay", 300000);
-        
+
         log.info("Connecting to Helios KWL on {}:{}", p.getProperty("host"), p.getProperty("port"));
         h = new Helios(host, port);
         h.setRestoreFanspeedAfterBoost(restoreFanspeedAfterBoost);
@@ -385,10 +387,10 @@ public class HeliosKwlRemote {
             } catch (TelegramException ex) {
                 ex.printStackTrace();
             }
-            
-            if (boostRemaining>0) {
+
+            if (boostRemaining > 0) {
                 log.info("Additional delay standby state switch by {}min due to running boost", boostRemaining);
-            } else if (boostRemaining==-1){
+            } else if (boostRemaining == -1) {
                 log.warn("Not able to read boost_remaining!");
             }
 

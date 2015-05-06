@@ -1,0 +1,131 @@
+2015-05-06 14:13:57.943 FINE [SendOnUpdate] de.root1.helios.Helios.readTelegram: Reading telegram...
+2015-05-06 14:13:57.953 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 1(dec)|01(hex)
+2015-05-06 14:13:57.953 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 00 00 01]
+2015-05-06 14:13:57.953 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f ab ?? 00]
+2015-05-06 14:13:57.954 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 17(dec)|11(hex)
+2015-05-06 14:13:57.954 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 00 01 11]
+2015-05-06 14:13:57.954 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f ab ?? 01]
+2015-05-06 14:13:57.957 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 47(dec)|2f(hex)
+2015-05-06 14:13:57.957 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 01 11 2f]
+2015-05-06 14:13:57.957 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f ab ?? 12]
+2015-05-06 14:13:57.958 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 171(dec)|ab(hex)
+2015-05-06 14:13:57.958 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 01 11 2f ab]
+2015-05-06 14:13:57.958 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f ab ?? 41]
+2015-05-06 14:13:57.958 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 3(dec)|03(hex)
+2015-05-06 14:13:57.958 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 01 11 2f ab 03]
+2015-05-06 14:13:57.958 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f ab ?? ec]
+2015-05-06 14:13:57.958 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 239(dec)|ef(hex)
+2015-05-06 14:13:57.958 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [01 11 2f ab 03 ef]
+2015-05-06 14:13:57.958 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f ab ?? ef]
+2015-05-06 14:13:57.958 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: ****** Time taken to read: 15 ms
+2015-05-06 14:13:57.958 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram received [01 11 2f ab 03 ef]
+2015-05-06 14:13:57.958 FINE [SendOnUpdate] de.root1.helios.Helios.readTelegram: Reading telegram...*done*
+2015-05-06 14:13:57.959 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Value for clean_filter (ab) received: 03|00000011|3 --> converted = 3
+2015-05-06 14:13:58.459 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Helios: Reading value: max_fanspeed
+2015-05-06 14:13:58.459 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Try to read, attempt #0
+2015-05-06 14:13:58.460 FINE [SendOnUpdate] de.root1.helios.Helios.waitForSilence: Waiting for silence...
+2015-05-06 14:13:58.467 FINE [SendOnUpdate] de.root1.helios.Helios.waitForSilence: Waiting fo silence....*done* gotSlot=true waited: 7 ms
+2015-05-06 14:13:58.467 FINE [SendOnUpdate] de.root1.helios.Helios.readTelegram: Reading telegram...
+2015-05-06 14:13:58.477 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 1(dec)|01(hex)
+2015-05-06 14:13:58.478 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 00 00 01]
+2015-05-06 14:13:58.478 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f a5 ?? 00]
+2015-05-06 14:13:58.481 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 17(dec)|11(hex)
+2015-05-06 14:13:58.482 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 00 01 11]
+2015-05-06 14:13:58.482 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f a5 ?? 01]
+2015-05-06 14:13:58.482 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 47(dec)|2f(hex)
+2015-05-06 14:13:58.482 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 01 11 2f]
+2015-05-06 14:13:58.482 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f a5 ?? 12]
+2015-05-06 14:13:58.482 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 165(dec)|a5(hex)
+2015-05-06 14:13:58.482 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 01 11 2f a5]
+2015-05-06 14:13:58.482 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f a5 ?? 41]
+2015-05-06 14:13:58.483 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 255(dec)|ff(hex)
+2015-05-06 14:13:58.483 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 01 11 2f a5 ff]
+2015-05-06 14:13:58.483 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f a5 ?? e6]
+2015-05-06 14:13:58.485 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 229(dec)|e5(hex)
+2015-05-06 14:13:58.486 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [01 11 2f a5 ff e5]
+2015-05-06 14:13:58.486 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f a5 ?? e5]
+2015-05-06 14:13:58.486 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: ****** Time taken to read: 19 ms
+2015-05-06 14:13:58.486 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram received [01 11 2f a5 ff e5]
+2015-05-06 14:13:58.486 FINE [SendOnUpdate] de.root1.helios.Helios.readTelegram: Reading telegram...*done*
+2015-05-06 14:13:58.486 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Value for max_fanspeed (a5) received: ff|11111111|-1 --> converted = 8
+2015-05-06 14:13:58.486 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Helios: Reading value: boost_on
+2015-05-06 14:13:58.486 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Try to read, attempt #0
+2015-05-06 14:13:58.486 FINE [SendOnUpdate] de.root1.helios.Helios.waitForSilence: Waiting for silence...
+2015-05-06 14:13:58.494 FINE [SendOnUpdate] de.root1.helios.Helios.waitForSilence: Waiting fo silence....*done* gotSlot=true waited: 8 ms
+2015-05-06 14:13:58.494 FINE [SendOnUpdate] de.root1.helios.Helios.readTelegram: Reading telegram...
+2015-05-06 14:13:58.505 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 1(dec)|01(hex)
+2015-05-06 14:13:58.505 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 00 00 01]
+2015-05-06 14:13:58.506 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f 71 ?? 00]
+2015-05-06 14:13:58.506 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 17(dec)|11(hex)
+2015-05-06 14:13:58.506 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 00 01 11]
+2015-05-06 14:13:58.506 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f 71 ?? 01]
+2015-05-06 14:13:58.509 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 47(dec)|2f(hex)
+2015-05-06 14:13:58.509 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 01 11 2f]
+2015-05-06 14:13:58.510 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f 71 ?? 12]
+2015-05-06 14:13:58.510 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 113(dec)|71(hex)
+2015-05-06 14:13:58.510 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 01 11 2f 71]
+2015-05-06 14:13:58.510 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f 71 ?? 41]
+2015-05-06 14:13:58.510 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 0(dec)|00(hex)
+2015-05-06 14:13:58.510 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 01 11 2f 71 00]
+2015-05-06 14:13:58.510 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f 71 ?? b2]
+2015-05-06 14:13:58.510 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 178(dec)|b2(hex)
+2015-05-06 14:13:58.510 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [01 11 2f 71 00 b2]
+2015-05-06 14:13:58.510 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f 71 ?? b2]
+2015-05-06 14:13:58.510 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: ****** Time taken to read: 16 ms
+2015-05-06 14:13:58.511 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram received [01 11 2f 71 00 b2]
+2015-05-06 14:13:58.511 FINE [SendOnUpdate] de.root1.helios.Helios.readTelegram: Reading telegram...*done*
+2015-05-06 14:13:58.511 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Value for boost_on (71) received: 00|00000000|0 --> converted = 0
+2015-05-06 14:13:58.511 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Helios: Reading value: fan_in_percent
+2015-05-06 14:13:58.511 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Try to read, attempt #0
+2015-05-06 14:13:58.511 FINE [SendOnUpdate] de.root1.helios.Helios.waitForSilence: Waiting for silence...
+2015-05-06 14:13:58.519 FINE [SendOnUpdate] de.root1.helios.Helios.waitForSilence: Waiting fo silence....*done* gotSlot=true waited: 8 ms
+2015-05-06 14:13:58.519 FINE [SendOnUpdate] de.root1.helios.Helios.readTelegram: Reading telegram...
+2015-05-06 14:13:58.529 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 1(dec)|01(hex)
+2015-05-06 14:13:58.529 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 00 00 01]
+2015-05-06 14:13:58.530 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f b0 ?? 00]
+2015-05-06 14:13:58.530 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 17(dec)|11(hex)
+2015-05-06 14:13:58.530 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 00 01 11]
+2015-05-06 14:13:58.530 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f b0 ?? 01]
+2015-05-06 14:13:58.533 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 47(dec)|2f(hex)
+2015-05-06 14:13:58.533 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 01 11 2f]
+2015-05-06 14:13:58.534 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f b0 ?? 12]
+2015-05-06 14:13:58.534 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 176(dec)|b0(hex)
+2015-05-06 14:13:58.534 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 01 11 2f b0]
+2015-05-06 14:13:58.534 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f b0 ?? 41]
+2015-05-06 14:13:58.534 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 100(dec)|64(hex)
+2015-05-06 14:13:58.534 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 01 11 2f b0 64]
+2015-05-06 14:13:58.534 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f b0 ?? f1]
+2015-05-06 14:13:58.534 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 85(dec)|55(hex)
+2015-05-06 14:13:58.534 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [01 11 2f b0 64 55]
+2015-05-06 14:13:58.534 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f b0 ?? 55]
+2015-05-06 14:13:58.534 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: ****** Time taken to read: 15 ms
+2015-05-06 14:13:58.535 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram received [01 11 2f b0 64 55]
+2015-05-06 14:13:58.535 FINE [SendOnUpdate] de.root1.helios.Helios.readTelegram: Reading telegram...*done*
+2015-05-06 14:13:58.535 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Value for fan_in_percent (b0) received: 64|01100100|100 --> converted = 100
+2015-05-06 14:13:58.535 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Helios: Reading value: fanspeed
+2015-05-06 14:13:58.536 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Try to read, attempt #0
+2015-05-06 14:13:58.536 FINE [SendOnUpdate] de.root1.helios.Helios.waitForSilence: Waiting for silence...
+2015-05-06 14:13:58.544 FINE [SendOnUpdate] de.root1.helios.Helios.waitForSilence: Waiting fo silence....*done* gotSlot=true waited: 7 ms
+2015-05-06 14:13:58.546 FINE [SendOnUpdate] de.root1.helios.Helios.readTelegram: Reading telegram...
+2015-05-06 14:13:58.557 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 1(dec)|01(hex)
+2015-05-06 14:13:58.557 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 00 00 01]
+2015-05-06 14:13:58.557 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f 29 ?? 00]
+2015-05-06 14:13:58.557 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 17(dec)|11(hex)
+2015-05-06 14:13:58.558 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 00 01 11]
+2015-05-06 14:13:58.558 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f 29 ?? 01]
+2015-05-06 14:13:58.558 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 47(dec)|2f(hex)
+2015-05-06 14:13:58.558 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 00 01 11 2f]
+2015-05-06 14:13:58.558 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f 29 ?? 12]
+2015-05-06 14:13:58.561 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 41(dec)|29(hex)
+2015-05-06 14:13:58.561 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 00 01 11 2f 29]
+2015-05-06 14:13:58.561 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f 29 ?? 41]
+2015-05-06 14:13:58.561 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 15(dec)|0f(hex)
+2015-05-06 14:13:58.562 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [00 01 11 2f 29 0f]
+2015-05-06 14:13:58.562 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f 29 ?? 6a]
+2015-05-06 14:13:58.562 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: read: 121(dec)|79(hex)
+2015-05-06 14:13:58.562 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array now is   [01 11 2f 29 0f 79]
+2015-05-06 14:13:58.562 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram array expected [01 11 2f 29 ?? 79]
+2015-05-06 14:13:58.562 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: ****** Time taken to read: 16 ms
+2015-05-06 14:13:58.562 FINEST [SendOnUpdate] de.root1.helios.Helios.readTelegram: Telegram received [01 11 2f 29 0f 79]
+2015-05-06 14:13:58.562 FINE [SendOnUpdate] de.root1.helios.Helios.readTelegram: Reading telegram...*done*
+2015-05-06 14:13:58.562 FINE [SendOnUpdate] de.root1.helios.Helios.readValue: Value for fanspeed (29) received: 0f|00001111|15 --> converted = 4
