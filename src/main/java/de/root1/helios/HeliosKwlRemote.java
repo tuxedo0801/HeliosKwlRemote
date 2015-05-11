@@ -22,6 +22,7 @@ import de.root1.slicknx.GroupAddressEvent;
 import de.root1.slicknx.GroupAddressListener;
 import de.root1.slicknx.Knx;
 import de.root1.slicknx.KnxException;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -158,8 +159,8 @@ public class HeliosKwlRemote {
         return value;
     }
 
-    public HeliosKwlRemote() throws IOException {
-        readConfig();
+    public HeliosKwlRemote(File configfile) throws IOException {
+        readConfig(configfile);
 
         int port = getIntFromProperties("port", 4000);
         String host = p.getProperty("host");
@@ -425,15 +426,41 @@ public class HeliosKwlRemote {
         }
     }
 
-    private void readConfig() throws FileNotFoundException, IOException {
+    private void readConfig(File configfile) throws FileNotFoundException, IOException {
         p = new Properties();
-        p.load(new FileReader("config.properties"));
+        p.load(new FileReader(configfile));
     }
 
     public static void main(String[] args) throws IOException {
 
-//        System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS.%1$tL %4$-6s %2$s %5$s%6$s%n");
-        new HeliosKwlRemote();
+        File option1 = new File("/etc/helioskwlremote/config.properties");
+        File option2 = new File("config.properties");
+        File f = option2;
+        if (args.length==2 && args[0].equals("-f")) {
+            f = new File(args[1]);
+            if (!f.exists() || f.isDirectory()) {
+                System.err.println("Given config file '"+args[1]+"' does not exist.");
+                System.exit(1);
+            } 
+        } else {
+            System.out.println("No config file specified with '-f <configfile>'. Searching for config file...");
+            if (option1.exists()) {
+                System.out.println("Autoselected config file '"+option1.getAbsolutePath()+"'");
+                f = option1;
+            } else {
+                System.out.println("No config file found in: "+option2.getAbsolutePath());
+                if (option2.exists()) {
+                    System.out.println("Autoselected config file '"+option2.getAbsolutePath()+"'");
+                    f = option2;
+                } else {
+                    System.out.println("No config file found in: "+option1.getAbsolutePath());
+                    System.err.println("No config file found. Please specify with '-f <filename>' ...");
+                    System.exit(1);
+                }
+            }
+        }
+        
+        new HeliosKwlRemote(f);
         while (!Thread.interrupted()) {
             try {
                 Thread.sleep(1000);
