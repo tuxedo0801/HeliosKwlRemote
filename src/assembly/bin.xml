@@ -23,6 +23,13 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>${project.basedir}</directory>
+            <outputDirectory>/etc/init.d</outputDirectory>
+            <includes>
+                <include>helioskwlremote</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>${project.build.directory}</directory>
             <outputDirectory></outputDirectory>
             <includes>
