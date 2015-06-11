@@ -43,7 +43,7 @@ public class HeliosKwlRemote {
 
     static {
         if (System.getProperty("java.util.logging.config.file") == null) {
-            System.out.println("Please specify logfile by passing '-Djava.util.logging.config.file=<logconfig-file>' to JVM");
+            System.out.println("Please specify logfile by passing '-Djava.util.logging.config.file=<logconfig-file>' to JVM to get advanced log possibilities.");
             LogFormatter formatter = new LogFormatter();
             Handler[] handlers = java.util.logging.Logger.getLogger("").getHandlers();
             for (Handler handler : handlers) {
