@@ -54,23 +54,23 @@ public class HeliosKwlRemote {
     private long standbyDelay = 300000; // 5min
     private long lastStandbySwitch = System.currentTimeMillis() - standbyDelay;
     private boolean timerScheduled;
-    private StandbySwitcher is;
+    private StandbySwitcher standbySwitcher;
 
     class StandbySwitcher extends TimerTask {
 
-        private final boolean newIdleState;
+        private boolean newStandbyState;
 
-        StandbySwitcher(boolean newIdleState) {
-            this.newIdleState = newIdleState;
+        StandbySwitcher(boolean newStandbyState) {
+            this.newStandbyState = newStandbyState;
         }
 
         public boolean getNewStandbyState() {
-            return newIdleState;
+            return newStandbyState;
         }
 
         @Override
         public void run() {
-            if (newIdleState == idleState) {
+            if (newStandbyState == idleState) {
                 log.debug("Nothing to do for standby switcher");
                 timerScheduled = false;
                 return;
@@ -79,14 +79,14 @@ public class HeliosKwlRemote {
                 int boostRemain = h.readValue("boost_remaining");
                 if (boostRemain > 0) {
                     log.info("Skipping standby-switch due to running boost. Will delay it.");
-                    triggerStandbyState(newIdleState);
+                    triggerStandbyState(newStandbyState);
                     return;
                 }
                 if (idleSpeed == -1) {
-                    log.warn("received standby-trigger '{}', but standby is disabled! Will skip this.", newIdleState);
+                    log.warn("received standby-trigger '{}', but standby is disabled! Will skip this.", newStandbyState);
                 } else {
-                    log.info("Switching standby state({}) to {}", idleState, newIdleState);
-                    if (newIdleState && !idleState) {
+                    log.info("Switching standby state({}) to {}", idleState, newStandbyState);
+                    if (newStandbyState && !idleState) {
                         lastFanspeed = h.readValue("fanspeed");
                         switch (idleSpeed) {
                             case 0:
@@ -105,7 +105,7 @@ public class HeliosKwlRemote {
                                 h.writeValue("fanspeed", idleSpeed);
                                 break;
                         }
-                    } else if (!newIdleState && idleState) {
+                    } else if (!newStandbyState && idleState) {
                         switch (idleSpeed) {
                             case 0:
                                 log.info("Switching power-state to ON (takes some time...)");
@@ -125,6 +125,10 @@ public class HeliosKwlRemote {
             }
             timerScheduled = false;
             lastStandbySwitch = System.currentTimeMillis();
+        }
+
+        private void setNewStandbyState(boolean newStandbyState) {
+            this.newStandbyState = newStandbyState;
         }
 
     }
@@ -159,7 +163,7 @@ public class HeliosKwlRemote {
         return value;
     }
 
-    public HeliosKwlRemote(File configfile) throws IOException {
+    public HeliosKwlRemote(File configfile) throws IOException, KnxException {
         readConfig(configfile);
 
         int port = getIntFromProperties("port", 4000);
@@ -365,16 +369,17 @@ public class HeliosKwlRemote {
 
     private void triggerStandbyState(boolean standby) {
 
-        if (is != null) {
-            if (standby == is.getNewStandbyState()) {
+        if (standbySwitcher != null) {
+            if (standby == standbySwitcher.getNewStandbyState()) {
                 log.info("new standby state '{}' is alreay scheduled. Nothing to do for now.", standby);
                 return;
             } else {
-                log.info("replacing scheduled standby state '{}' with '{}'", is.getNewStandbyState(), standby);
-                is.cancel();
+                log.info("replacing scheduled standby state '{}' with '{}'", standbySwitcher.getNewStandbyState(), standby);
+//                standbySwitcher.cancel();
+                standbySwitcher.setNewStandbyState(standby);
             }
         }
-        is = new StandbySwitcher(standby);
+        standbySwitcher = new StandbySwitcher(standby);
 
         if (System.currentTimeMillis() - lastStandbySwitch < standbyDelay || timerScheduled) {
             // run with delay
@@ -396,11 +401,11 @@ public class HeliosKwlRemote {
             }
 
             timerScheduled = true;
-            t.schedule(is, standbyDelay + (boostRemaining * 60/*sec*/ * 1000/* millisec */));
+            t.schedule(standbySwitcher, standbyDelay + (boostRemaining * 60/*sec*/ * 1000/* millisec */));
 
         } else {
             // run now
-            is.run();
+            standbySwitcher.run();
         }
 
     }
@@ -431,7 +436,7 @@ public class HeliosKwlRemote {
         p.load(new FileReader(configfile));
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, KnxException {
 
         File option1 = new File("/etc/helioskwlremote/config.properties");
         File option2 = new File("config.properties");
