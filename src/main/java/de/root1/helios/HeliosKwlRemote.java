@@ -121,7 +121,8 @@ public class HeliosKwlRemote {
                     idleState = !idleState;
                 }
             } catch (Exception ex) {
-                log.error("Error triggering idle state", ex);
+                log.error("Error triggering idle state. Will retrigger in 10sec.", ex);
+                t.schedule(this, 10000); // retrigger after 10sec.
             }
             timerScheduled = false;
             lastStandbySwitch = System.currentTimeMillis();
