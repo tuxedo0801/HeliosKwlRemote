@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,7 +95,7 @@ public class Helios {
     private boolean isConnected;
 
     // delay between two waitForSilence+send commands
-    private final long SEND_DELAY = 1;
+    private final long SEND_DELAY = 50;
 
     // delay before retry reading
     private final long RETRY_DELAY = 10;
@@ -519,7 +520,7 @@ public class Helios {
             sendTelegram(new byte[]{telegram[5]});
 
             // #### Special treatment to switch the remote controls on again:
-            if (var.varid == 0xA3 && var.bitposition == 0) {
+            if (var.varid == (byte) 0xA3 && var.bitposition == 0) {
 
                 log.debug("On/Off command - special treatment for the remote controls");
                 telegram = createTelegram(CONST_BUS_ME, CONST_BUS_ALL_REMOTES, var.varid, (byte) rawvalue);
@@ -529,6 +530,13 @@ public class Helios {
                 sendTelegram(telegram);
 
                 sendTelegram(new byte[]{telegram[5]});
+                
+                // power-commands need a bit of sleep before next commands can be processed.
+                try {
+                    log.info("Power State Change. Need to sleep.");
+                    Thread.sleep(15000);
+                } catch (InterruptedException ex) {
+                }
 
             }
             // #####
