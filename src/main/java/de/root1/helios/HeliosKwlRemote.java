@@ -66,6 +66,7 @@ public class HeliosKwlRemote {
 
     private final Timer t = new Timer("StandbyStateSwitcher", true);
     private boolean standbySwitcherScheduled;
+    private final Object STANDBY_LOCK = new Object();
     private StandbySwitcher standbySwitcher = new StandbySwitcher(false);
 
     private boolean currentStandbyState = false; // default: not in standby
@@ -88,77 +89,79 @@ public class HeliosKwlRemote {
         @Override
         public void run() {
 
-            if (targetStandbyState == currentStandbyState) {
-                log.debug("Nothing to do for standby switcher, as target state equals current state: {}", currentStandbyState);
-                standbySwitcherScheduled = false;
-                return;
-            }
-
-            try {
-
-                // check if boost is running
-                int boostRemain = h.readValue("boost_remaining");
-                if (boostRemain > 0) {
-                    log.info("Cannot switch standby state while boost is running. Will delay it.");
-                    triggerStandbyState(targetStandbyState);
+            synchronized (STANDBY_LOCK) {
+                if (targetStandbyState == currentStandbyState) {
+                    log.debug("Nothing to do for standby switcher, as target state equals current state: {}", currentStandbyState);
+                    standbySwitcherScheduled = false;
                     return;
                 }
 
-                if (standbySpeed == STANDBY_MODE_DISABLED) {
+                try {
 
-                    log.warn("received standby-trigger '{}', but standby is disabled! Will skip this.", targetStandbyState);
-
-                } else {
-
-                    log.info("Switching standby state from {} to {}", currentStandbyState, targetStandbyState);
-
-                    // switching into STANDBY
-                    if (targetStandbyState && !currentStandbyState) {
-
-                        // store fanspeed before going into standby
-                        lastFanspeed = h.readValue("fanspeed");
-                        log.info("Store last fanspeed for later restore: {}", lastFanspeed);
-
-                        switch (standbySpeed) {
-                            case 0:
-                                log.info("Switching power-state to OFF");
-                                h.writeValue("power_state", 0);
-                                break;
-                            case 1:
-                            case 2:
-                            case 3:
-                            case 4:
-                            case 5:
-                            case 6:
-                            case 7:
-                            case 8:
-                                log.info("Switching fanspeed to standby speed {}", standbySpeed);
-                                h.writeValue("fanspeed", standbySpeed);
-                                break;
-                        }
-                    } else // switching into WORKING
-                    if (!targetStandbyState && currentStandbyState) {
-                        switch (standbySpeed) {
-                            case 0:
-                                log.info("Switching power-state to ON (takes some time...)");
-                                h.writeValue("power_state", 1);
-                            default:
-                                log.info("Restore last fanspeed: {}", lastFanspeed);
-                                h.writeValue("fanspeed", lastFanspeed);
-                                break;
-                        }
+                    // check if boost is running
+                    int boostRemain = h.readValue("boost_remaining");
+                    if (boostRemain > 0) {
+                        log.info("Cannot switch standby state while boost is running. Will delay it.");
+                        triggerStandbyState(targetStandbyState);
+                        return;
                     }
 
-                    // toggle standby state
-                    currentStandbyState = !currentStandbyState;
-                    lastStandbySwitch = System.currentTimeMillis();
-                    standbySwitcherScheduled = false;
-                    log.info("*done*");
-                }
+                    if (standbySpeed == STANDBY_MODE_DISABLED) {
 
-            } catch (Throwable ex) {
-                log.error("Error triggering idle state. Will retrigger in 10sec.", ex);
-                t.schedule(this, 10000); // retrigger after 10sec.
+                        log.warn("received standby-trigger '{}', but standby is disabled! Will skip this.", targetStandbyState);
+
+                    } else {
+
+                        log.info("Switching standby state from {} to {}", currentStandbyState, targetStandbyState);
+
+                        // switching into STANDBY
+                        if (targetStandbyState && !currentStandbyState) {
+
+                            // store fanspeed before going into standby
+                            lastFanspeed = h.readValue("fanspeed");
+                            log.info("Store last fanspeed for later restore: {}", lastFanspeed);
+
+                            switch (standbySpeed) {
+                                case 0:
+                                    log.info("Switching power-state to OFF");
+                                    h.writeValue("power_state", 0);
+                                    break;
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4:
+                                case 5:
+                                case 6:
+                                case 7:
+                                case 8:
+                                    log.info("Switching fanspeed to standby speed {}", standbySpeed);
+                                    h.writeValue("fanspeed", standbySpeed);
+                                    break;
+                            }
+                        } else // switching into WORKING
+                        if (!targetStandbyState && currentStandbyState) {
+                            switch (standbySpeed) {
+                                case 0:
+                                    log.info("Switching power-state to ON (takes some time...)");
+                                    h.writeValue("power_state", 1);
+                                default:
+                                    log.info("Restore last fanspeed: {}", lastFanspeed);
+                                    h.writeValue("fanspeed", lastFanspeed);
+                                    break;
+                            }
+                        }
+
+                        // toggle standby state
+                        currentStandbyState = !currentStandbyState;
+                        lastStandbySwitch = System.currentTimeMillis();
+                        standbySwitcherScheduled = false;
+                        log.info("*done*");
+                    }
+
+                } catch (Throwable ex) {
+                    log.error("Error triggering idle state. Will retrigger in 10sec.", ex);
+                    t.schedule(this, 10000); // retrigger after 10sec.
+                }
             }
 
         }
@@ -405,80 +408,82 @@ public class HeliosKwlRemote {
 
     private void triggerStandbyState(boolean standby) {
 
-        boolean needToSchedule = false;
-        long delayToSchedule = 0;
+        synchronized (STANDBY_LOCK) {
+            boolean needToSchedule = false;
+            long delayToSchedule = 0;
 
-        /* ******************
-         * decide what to do
-         */
-        if (!standbySwitcherScheduled) {
+            /* ******************
+             * decide what to do
+             */
+            if (!standbySwitcherScheduled) {
 
             // standby switcher not yet scheduled
-            // if need to schedule
-            if (currentStandbyState != standby) {
-                needToSchedule = true;
-                standbySwitcher.setTargetStandbyState(standby);
-            } else {
-                log.warn("target standby state matches current standby state ({}), no switch scheduled yet. Illegal state detected?", standby);
-                return;
-            }
-
-        } else {
-
-            // standby switcher already scheduled
-            if (standby == standbySwitcher.getTargetStandbyState()) {
-                log.info("new standby state '{}' is alreay scheduled. Nothing to do for now.", standby);
-                return;
-            } else {
-                log.info("replacing scheduled standby state '{}' with '{}'", standbySwitcher.getTargetStandbyState(), standby);
-                standbySwitcher.setTargetStandbyState(standby);
-            }
-        }
-
-        /* ******************
-         * decide when to do
-         */
-        if (needToSchedule) {
-            int boostRemaining = -1;
-            try {
-                boostRemaining = h.readValue("boost_remaining");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            } catch (TelegramException ex) {
-                ex.printStackTrace();
-            }
-
-            if (boostRemaining > 0) {
-
-                log.info("delay standby state switch from '{}' to '{}' by {}min due to running boost", currentStandbyState, standby, boostRemaining);
-                delayToSchedule = (boostRemaining * 60/*sec*/ * 1000/* millisec */);
+                // if need to schedule
+                if (currentStandbyState != standby) {
+                    needToSchedule = true;
+                    standbySwitcher.setTargetStandbyState(standby);
+                } else {
+                    log.warn("target standby state matches current standby state ({}), no switch scheduled yet. Illegal state detected?", standby);
+                    return;
+                }
 
             } else {
+
+                // standby switcher already scheduled
+                if (standby == standbySwitcher.getTargetStandbyState()) {
+                    log.info("new standby state '{}' is alreay scheduled. Nothing to do for now.", standby);
+                    return;
+                } else {
+                    log.info("replacing scheduled standby state '{}' with '{}'", standbySwitcher.getTargetStandbyState(), standby);
+                    standbySwitcher.setTargetStandbyState(standby);
+                }
+            }
+
+            /* ******************
+             * decide when to do
+             */
+            if (needToSchedule) {
+                int boostRemaining = -1;
+                try {
+                    boostRemaining = h.readValue("boost_remaining");
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } catch (TelegramException ex) {
+                    ex.printStackTrace();
+                }
+
+                if (boostRemaining > 0) {
+
+                    log.info("delay standby state switch from '{}' to '{}' by {}min due to running boost", currentStandbyState, standby, boostRemaining);
+                    delayToSchedule = (boostRemaining * 60/*sec*/ * 1000/* millisec */);
+
+                } else {
 
                 // no boost running
-                // switch to ON (means: standby off)
-                if (currentStandbyState == true && standby == false) {
+                    // switch to ON (means: standby off)
+                    if (currentStandbyState == true && standby == false) {
 
-                    // immediate ON
-                    delayToSchedule = toMinimum0(MINIMUM_STANDBY_DELAY - (System.currentTimeMillis() - lastStandbySwitch));
-                    log.info("immediate standby state switch from '{}' to '{}' in {}ms", currentStandbyState, standby, delayToSchedule);
+                        // immediate ON
+                        delayToSchedule = toMinimum0(MINIMUM_STANDBY_DELAY - (System.currentTimeMillis() - lastStandbySwitch));
+                        log.info("immediate standby state switch from '{}' to '{}' in {}ms", currentStandbyState, standby, delayToSchedule);
 
-                } else // switch to OFF (means: standby oon)
-                {
+                    } else // switch to OFF (means: standby oon)
+                    {
 
-                    // delay OFF up to standbyDelay
-                    delayToSchedule = toMinimum0(standbyDelay - (System.currentTimeMillis() - lastStandbySwitch));
-                    log.info("delay standby state switch from '{}' to '{}' for {}ms", currentStandbyState, standby, delayToSchedule);
+                        // delay OFF up to standbyDelay
+                        delayToSchedule = toMinimum0(standbyDelay - (System.currentTimeMillis() - lastStandbySwitch));
+                        log.info("delay standby state switch from '{}' to '{}' for {}ms", currentStandbyState, standby, delayToSchedule);
+
+                    }
 
                 }
 
+                standbySwitcherScheduled = true;
+                t.schedule(standbySwitcher.createNew(), delayToSchedule);
+                log.info("Schedule standby switch from '{}' to '{}' with {}ms delay", currentStandbyState, standbySwitcher.getTargetStandbyState(), delayToSchedule);
+            } else {
+                log.info("No schedule required");
             }
-
-            standbySwitcherScheduled = true;
-            t.schedule(standbySwitcher.createNew(), delayToSchedule);
-            log.info("Schedule standby switch from '{}' to '{}' with {}ms delay", currentStandbyState, standbySwitcher.getTargetStandbyState(), delayToSchedule);
-        } else {
-            log.info("No schedule required");
         }
 
     }
